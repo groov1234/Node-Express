@@ -1,44 +1,67 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const server = express();
 const PORT = 3030;
 
-server.use(bodyParser.json());
-
 const users = [
   {
     id: 0,
-    name: "",
-    age: "",
-  }
+    name: "Calum",
+    age: "30",
+  },
+  {
+    id: 1,
+    name: "Joseph",
+    age: "32",
+  },
+  {
+    id: 2,
+    name: "Bart",
+    age: "45",
+  },
 ];
 
-server.use('/', (req, res, next) => {
-  console.log('Request type:', req.methhod);
-  next();
+server.use(bodyParser.json());
+
+server.use(cors());
+
+server.get('/users', (req, res) => {
+  res.send(users);
 });
 
 server.post('/users', (req, res) => {
-  res.send(user[req.params.users])
+  users.push(req.body);
+  res.send(users);
 })
 
-server.get('/users', (req, res) => {
-  res.send(users[req.params.user] + "");
-});
+
 
 server.get('/users/:id', (req, res) => {
-  user[req.body.id] = userID;
-  userId++
-  res.send(userId + "");
+  const { id } = req.params;
+  console.log('id ->', id);
+  const { name } = req.body;
+  console.log('name ->', name);
+  const users = users.filter(user => {
+    return user.id !== id;
+  });
+  const foundUser = users.find(findUserById);
+  if (!foundUser) {
+    res.json({ error: 'User not found by that id' });
+  } else {
+    res.json(foundUser);
+  }
 });
 
-server.get('/search?name=<query>', (req, res) => {
-  res.send(name[req.query.user]);
-})
+// server.get('/search?name=<query>', (req, res) => {
+//   res.send();
+// })
 
 server.delete('/users/:id', (req, res) => {
-  
+  const id = req.body.id;
+  users.splice(id, 1);
+  res.send(users);
 })
 
 server.listen(PORT, err => {
